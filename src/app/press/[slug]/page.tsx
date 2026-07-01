@@ -1,13 +1,21 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { press, type PressItem } from "@/lib/mock-data";
+import { getPressItem, getPressItems } from "@/lib/site-data";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const press = await getPressItems();
+  return press.map((item) => ({ slug: item.slug }));
+}
+
 export async function generateMetadata({ params }: Props) {
-  const item = press.find((p) => p.slug === params.slug);
+  const { slug } = await params;
+  const item = await getPressItem(slug);
 
   if (!item) {
     return {
@@ -21,8 +29,9 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default function PressDetailPage({ params }: Props) {
-  const item = press.find((p) => p.slug === params.slug);
+export default async function PressDetailPage({ params }: Props) {
+  const { slug } = await params;
+  const item = await getPressItem(slug);
 
   if (!item) return notFound();
 

@@ -2,19 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CoverArt } from "@/components/CoverArt";
-import { releases } from "@/lib/mock-data";
+import { getRelease, getReleases } from "@/lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 type ReleasePageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const releases = await getReleases();
   return releases.map((release) => ({ slug: release.slug }));
 }
 
 export async function generateMetadata({ params }: ReleasePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const release = releases.find((item) => item.slug === slug);
+  const release = await getRelease(slug);
 
   if (!release) {
     return {
@@ -34,7 +37,7 @@ export async function generateMetadata({ params }: ReleasePageProps): Promise<Me
 
 export default async function ReleasePage({ params }: ReleasePageProps) {
   const { slug } = await params;
-  const release = releases.find((item) => item.slug === slug);
+  const release = await getRelease(slug);
 
   if (!release) {
     notFound();

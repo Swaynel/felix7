@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
-import { releases } from "@/lib/mock-data";
+import { getReleases } from "@/lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Music",
@@ -9,7 +11,9 @@ export const metadata: Metadata = {
     "Full discography of feli7xrescent - LPs, EPs, and singles. Stream on Spotify, Apple Music, and Bandcamp.",
 };
 
-export default function MusicPage() {
+export default async function MusicPage() {
+  const releases = await getReleases();
+
   return (
     <section className="px-6 pt-32 pb-24">
       <div className="mx-auto max-w-7xl">

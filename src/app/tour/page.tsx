@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { formatShowDate, shows } from "@/lib/mock-data";
+import { formatShowDate, getShows } from "@/lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Tour",
@@ -7,7 +9,9 @@ export const metadata: Metadata = {
     "feli7xrescent tour dates. Europe and North America, autumn 2026. Tickets and venue details.",
 };
 
-export default function TourPage() {
+export default async function TourPage() {
+  const shows = await getShows();
+
   return (
     <section className="px-6 pt-32 pb-24">
       <div className="mx-auto max-w-5xl">

@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CoverArt } from "@/components/CoverArt";
-import { products, type Product } from "@/lib/mock-data";
+import type { SiteProduct } from "@/lib/site-data";
 
 const CATEGORIES = ["All", "Apparel", "Vinyl", "Digital", "Accessory"] as const;
 type Category = (typeof CATEGORIES)[number];
 
-export function ShopCatalog() {
+export function ShopCatalog({ products }: { products: SiteProduct[] }) {
   const [filter, setFilter] = useState<Category>("All");
-  const list: Product[] =
+  const list: SiteProduct[] =
     filter === "All" ? products : products.filter((product) => product.category === filter);
 
   return (
@@ -59,7 +59,7 @@ export function ShopCatalog() {
                   <h2 className="text-sm uppercase tracking-widest transition-colors group-hover:text-accent">
                     {product.name}
                   </h2>
-                  <span className="text-sm text-accent">${product.price}</span>
+                  <span className="text-sm text-accent">{product.priceLabel}</span>
                 </div>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
                   {product.category}

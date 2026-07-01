@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { press } from "@/lib/mock-data";
 import Link from "next/link";
+import { getPressItems } from "@/lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Press & News",
   description: "Latest news, press mentions, and dispatches from feli7xrescent.",
 };
 
-export default function PressPage() {
+export default async function PressPage() {
+  const press = await getPressItems();
   const news = press.filter((item) => item.type === "news");
   const mentions = press.filter((item) => item.type !== "news");
 

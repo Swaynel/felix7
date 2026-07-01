@@ -19,7 +19,7 @@
 
 # production
 /build
-
+/certs/ca.pem
 # misc
 .DS_Store
 *.pem

@@ -13,9 +13,42 @@ const INTENTS: { id: Intent; label: string; sub: string }[] = [
 export function ContactForm() {
   const [intent, setIntent] = useState<Intent>("booking");
   const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [message, setMessage] = useState("");
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setStatus("loading");
+    setMessage("");
+
+    const form = new FormData(event.currentTarget);
+    const response = await fetch("/api/inquiries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: intent === "booking" ? "BOOKING" : intent === "press" ? "PRESS" : "FAN",
+        name: String(form.get("name") ?? ""),
+        email: String(form.get("email") ?? ""),
+        message: String(form.get("message") ?? ""),
+        metadata:
+          intent === "booking"
+            ? {
+                venue: String(form.get("company") ?? ""),
+                eventDate: String(form.get("date") ?? ""),
+              }
+            : intent === "press"
+              ? { publication: String(form.get("outlet") ?? "") }
+              : undefined,
+      }),
+    });
+
+    if (!response.ok) {
+      setStatus("error");
+      setMessage("The backend could not save this inquiry. Check your database connection and try again.");
+      return;
+    }
+
+    setStatus("idle");
     setSent(true);
   }
 
@@ -35,6 +68,8 @@ export function ContactForm() {
               onClick={() => {
                 setIntent(item.id);
                 setSent(false);
+                setStatus("idle");
+                setMessage("");
               }}
               className={`rounded-md border p-5 text-left transition-colors ${
                 intent === item.id ? "border-accent bg-accent/5" : "border-white/5 hover:border-white/20"
@@ -95,11 +130,13 @@ export function ContactForm() {
               </p>
               <button
                 type="submit"
+                disabled={status === "loading"}
                 className="rounded-full bg-accent px-10 py-3 text-[11px] uppercase tracking-[0.3em] text-background transition-colors hover:bg-accent/80"
               >
-                Send
+                {status === "loading" ? "Sending" : "Send"}
               </button>
             </div>
+            {message && <p className="text-sm text-accent">{message}</p>}
           </form>
         )}
       </div>

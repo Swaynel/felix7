@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CoverArt } from "@/components/CoverArt";
-import { formatShowDate, products, releases, shows } from "@/lib/mock-data";
+import { formatShowDate, getProducts, getReleases, getShows } from "@/lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Vesper Hour out now",
@@ -9,14 +11,37 @@ export const metadata: Metadata = {
     "Official site of feli7xrescent. New LP Vesper Hour out now - stream, tour dates, merch, and press.",
 };
 
-export default function Home() {
+// Single source of truth for the hero video — swap the ID here to change it everywhere.
+const HERO_YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ";
+const HERO_YOUTUBE_EMBED_URL = `https://www.youtube-nocookie.com/embed/${HERO_YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_YOUTUBE_VIDEO_ID}&controls=0&modestbranding=1&rel=0&disablekb=1`;
+
+export default async function Home() {
+  const [releases, shows, products] = await Promise.all([
+    getReleases(),
+    getShows(),
+    getProducts(),
+  ]);
   const featured = releases.find((release) => release.featured) ?? releases[0];
   const upcoming = shows.slice(0, 3);
   const featuredMerch = products.slice(0, 3);
   const archive = releases.slice(0, 5);
 
   return (
-    <>
+    <div className="relative isolate">
+      {/* Ambient video underlay — absolutely positioned so it never adds to page height. */}
+      <div className="pointer-events-none absolute left-1/2 right-1/2 top-0 -z-10 h-[45vh] w-screen -mx-[50vw] overflow-hidden">
+        <iframe
+          src={HERO_YOUTUBE_EMBED_URL}
+          title="Background video"
+          className="h-full w-full scale-125 select-none blur-md"
+          tabIndex={-1}
+          loading="eager"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="autoplay; encrypted-media"
+        />
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
+
       <section className="px-6 pt-32 pb-24">
         <div className="mx-auto flex max-w-7xl flex-col items-center">
           <div className="group relative">
@@ -168,13 +193,13 @@ export default function Home() {
                       {product.category}
                     </p>
                   </div>
-                  <span className="text-sm text-accent">${product.price}</span>
+                  <span className="text-sm text-accent">{product.priceLabel}</span>
                 </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
