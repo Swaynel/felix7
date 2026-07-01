@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #09090b;
+  --fg: #e4e4e7;
+  --surface: #121214;
+  --surface-2: #1c1c20;
+  --muted: #2a2a2e;
+  --muted-fg: #71717a;
+  --accent: #dc2626;
+  --accent-soft: color-mix(in oklab, #dc2626 18%, transparent);
+  --border: rgba(255, 255, 255, 0.06);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-fg);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-border: var(--border);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--fg);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--fg);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--bg);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--fg);
+  --color-destructive: var(--accent);
+  --color-destructive-foreground: var(--bg);
+  --color-input: var(--surface-2);
+  --color-ring: var(--accent);
+
+  --font-display: "Pirata One", "Times New Roman", serif;
+  --font-sans: "Public Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius: 0.5rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html,
+  body {
+    min-height: 100%;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Public Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--accent) 40%, transparent);
+    color: #fff;
+  }
+
+  .font-display {
+    font-family: "Pirata One", "Times New Roman", serif;
+    letter-spacing: 0;
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility text-eyebrow {
+  color: var(--muted-fg);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
